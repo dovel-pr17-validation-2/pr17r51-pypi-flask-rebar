@@ -1,0 +1,69 @@
+name: flask-rebar Pull Request Tests
+
+on:
+- pull_request
+
+jobs:
+  tests:
+    name: Testing on Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 20
+      fail-fast: false
+      matrix:
+        python:
+        - "3.10"
+        - 3.11
+        - 3.12
+        - 3.13
+        - 3.14
+        marshmallow:
+        - "'marshmallow<4'"
+        - "'marshmallow==4.1.*'"
+        - "'marshmallow>4.2.0'"
+        flask:
+        - flask=='2.3.*' werkzeug=='2.3.*'
+        - flask=='3.0.*' werkzeug=='3.0.*'
+        - flask=='3.1.*' werkzeug=='3.1.*'
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python:${{ matrix.python }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python }}
+    - name: "Test with ${{matrix.libraries}}"
+      run: |
+        python -m pip install -U pip
+        python -m pip install '.[dev,enum,pydantic]' ${{matrix.flask}} ${{matrix.marshmallow}}
+        python -m pip freeze
+    - name: Run Tests
+      run: |
+        python -m pytest -v -ra --junitxml=pytest.xml
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v3
+      if: always()
+      with:
+        report_paths: pytest.xml
+        check_name: "JUnit Report python${{matrix.python}} ${{matrix.marshmallow}} ${{matrix.flask}}"
+
+  formatter:
+    name: Format using Black
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    - name: "Install dependencies"
+      run: |
+        python -m pip install -U pip
+        python -m pip install '.[dev]'
+        python -m pip freeze
+    - name: Run black
+      run: |
+        python -m black --check --diff .
+    - name: Run flake8
+      run: |
+        python -m flake8 .
