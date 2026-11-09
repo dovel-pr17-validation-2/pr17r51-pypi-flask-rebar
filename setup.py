@@ -7,7 +7,7 @@ development = [
     "black==23.7.0",
     "bumpversion==0.6.0",
     "click>=8.1.3,<9.0.0",
-    "flake8==6.0.0",
+    "flake8==6.1.0",
     "gitchangelog>=3.0.4,<4.0.0",
     "jsonschema==4.18.4",
     "marshmallow-objects~=2.3",
