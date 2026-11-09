@@ -9,7 +9,7 @@ development = [
     "click>=8.1.3,<9.0.0",
     "flake8==6.0.0",
     "gitchangelog>=3.0.4,<4.0.0",
-    "jsonschema==4.18.4",
+    "jsonschema==4.26.0",
     "marshmallow-objects~=2.3",
     "mypy==1.8.0",
     "parametrize==0.1.1",
